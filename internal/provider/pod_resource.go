@@ -9,7 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -112,24 +114,36 @@ func (r *PodResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Optional:            true,
 				Computed:            true,
 				Default:             stringdefault.StaticString("GPU"),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"cloud_type": schema.StringAttribute{
 				MarkdownDescription: "Set to SECURE to create the Pod in Secure Cloud. Set to COMMUNITY to create the Pod in Community Cloud.",
 				Optional:            true,
 				Computed:            true,
 				Default:             stringdefault.StaticString("SECURE"),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"gpu_count": schema.Int64Attribute{
 				MarkdownDescription: "If the Pod is a GPU Pod, the number of GPUs attached to the Pod.",
 				Optional:            true,
 				Computed:            true,
 				Default:             int64default.StaticInt64(1),
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.UseStateForUnknown(),
+				},
 			},
 			"vcpu_count": schema.Int64Attribute{
 				MarkdownDescription: "If the Pod is a CPU Pod, the number of vCPUs allocated to the Pod.",
 				Optional:            true,
 				Computed:            true,
 				Default:             int64default.StaticInt64(2),
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.UseStateForUnknown(),
+				},
 			},
 			"gpu_type_ids": schema.ListAttribute{
 				MarkdownDescription: "If the Pod is a GPU Pod, a list of RunPod GPU types which can be attached to the Pod.",
@@ -212,12 +226,18 @@ func (r *PodResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Optional:            true,
 				Computed:            true,
 				Default:             int64default.StaticInt64(2),
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.UseStateForUnknown(),
+				},
 			},
 			"min_ram_per_gpu": schema.Int64Attribute{
 				MarkdownDescription: "If the Pod is a GPU Pod, the minimum amount of RAM, in gigabytes (GB), allocated to the Pod for each GPU.",
 				Optional:            true,
 				Computed:            true,
 				Default:             int64default.StaticInt64(8),
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.UseStateForUnknown(),
+				},
 			},
 			"min_download_mbps": schema.Float64Attribute{
 				MarkdownDescription: "The minimum download speed, in megabits per second (Mbps), for the Pod.",
@@ -256,18 +276,27 @@ func (r *PodResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				Optional:            true,
 				Computed:            true,
 				Default:             stringdefault.StaticString("availability"),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"cpu_flavor_priority": schema.StringAttribute{
 				MarkdownDescription: "If the Pod is a CPU Pod, set to availability to respond to current CPU flavor availability. Set to custom to always try to rent CPU flavors in the order specified.",
 				Optional:            true,
 				Computed:            true,
 				Default:             stringdefault.StaticString("availability"),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"data_center_priority": schema.StringAttribute{
 				MarkdownDescription: "Set to availability to respond to current machine availability. Set to custom to always try to rent machines from data centers in the order specified.",
 				Optional:            true,
 				Computed:            true,
 				Default:             stringdefault.StaticString("availability"),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"container_registry_auth_id": schema.StringAttribute{
 				MarkdownDescription: "Registry credentials ID.",
@@ -277,34 +306,58 @@ func (r *PodResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			"desired_status": schema.StringAttribute{
 				MarkdownDescription: "The current expected status of the Pod.",
 				Computed:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"public_ip": schema.StringAttribute{
 				MarkdownDescription: "The public IP address of the Pod.",
 				Computed:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"machine_id": schema.StringAttribute{
 				MarkdownDescription: "The unique identifier of the host machine the Pod is running on.",
 				Computed:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"actual_data_center": schema.StringAttribute{
 				MarkdownDescription: "The actual data center where the Pod was deployed.",
 				Computed:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"cost_per_hr": schema.Float64Attribute{
 				MarkdownDescription: "The cost in RunPod credits per hour of running the Pod.",
 				Computed:            true,
+				PlanModifiers: []planmodifier.Float64{
+					float64planmodifier.UseStateForUnknown(),
+				},
 			},
 			"adjusted_cost_per_hr": schema.Float64Attribute{
 				MarkdownDescription: "The effective cost in RunPod credits per hour of running the Pod, adjusted by active Savings Plans.",
 				Computed:            true,
+				PlanModifiers: []planmodifier.Float64{
+					float64planmodifier.UseStateForUnknown(),
+				},
 			},
 			"memory_in_gb": schema.Float64Attribute{
 				MarkdownDescription: "The amount of RAM, in gigabytes (GB), attached to the Pod.",
 				Computed:            true,
+				PlanModifiers: []planmodifier.Float64{
+					float64planmodifier.UseStateForUnknown(),
+				},
 			},
 			"last_started_at": schema.StringAttribute{
 				MarkdownDescription: "The UTC timestamp when the Pod was last started.",
 				Computed:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 		},
 	}
@@ -610,17 +663,40 @@ func (r *PodResource) updateStateFromPod(ctx context.Context, data *PodResourceM
 		data.ImageName = types.StringValue(pod.ImageName)
 	}
 
+	// Update computed status/runtime fields
 	data.DesiredStatus = types.StringValue(pod.DesiredStatus)
 	data.PublicIp = types.StringValue(pod.PublicIp)
 	data.MachineId = types.StringValue(pod.MachineId)
-	// TODO: Figure out how to get actual data center from RunPod API
-	// For now, we'll leave this empty until we find a way to determine the region
-	data.ActualDataCenter = types.StringValue("")
 	data.CostPerHr = types.Float64Value(pod.CostPerHr)
 	data.AdjustedCostPerHr = types.Float64Value(pod.AdjustedCostPerHr)
 	data.MemoryInGb = types.Float64Value(pod.MemoryInGb)
 	data.LastStartedAt = types.StringValue(pod.LastStartedAt)
 
+	// Update compute/cloud type fields - use API value if available, otherwise preserve state or use default
+	if pod.ComputeType != "" {
+		data.ComputeType = types.StringValue(pod.ComputeType)
+	} else if data.ComputeType.IsNull() || data.ComputeType.IsUnknown() {
+		data.ComputeType = types.StringValue("GPU") // default
+	}
+	if pod.CloudType != "" {
+		data.CloudType = types.StringValue(pod.CloudType)
+	} else if data.CloudType.IsNull() || data.CloudType.IsUnknown() {
+		data.CloudType = types.StringValue("SECURE") // default
+	}
+
+	// Update GPU/CPU counts - use API value if available, otherwise preserve state or use default
+	if pod.GPUCount > 0 {
+		data.GPUCount = types.Int64Value(int64(pod.GPUCount))
+	} else if data.GPUCount.IsNull() || data.GPUCount.IsUnknown() {
+		data.GPUCount = types.Int64Value(1) // default
+	}
+	if pod.VCPUCount > 0 {
+		data.VCPUCount = types.Int64Value(int64(pod.VCPUCount))
+	} else if data.VCPUCount.IsNull() || data.VCPUCount.IsUnknown() {
+		data.VCPUCount = types.Int64Value(2) // default
+	}
+
+	// Update disk/volume sizes if returned by API
 	if pod.VolumeInGb > 0 {
 		data.VolumeInGb = types.Int64Value(int64(pod.VolumeInGb))
 	}
@@ -629,5 +705,50 @@ func (r *PodResource) updateStateFromPod(ctx context.Context, data *PodResourceM
 	}
 	if pod.VolumeMountPath != "" {
 		data.VolumeMountPath = types.StringValue(pod.VolumeMountPath)
+	}
+
+	// Update boolean fields - these are always present in the API response
+	data.Interruptible = types.BoolValue(pod.Interruptible)
+	data.Locked = types.BoolValue(pod.Locked)
+	data.GlobalNetworking = types.BoolValue(pod.GlobalNetworking)
+
+	// Update min requirements - use API value if available, otherwise preserve state or use default
+	if pod.MinVCPUPerGPU > 0 {
+		data.MinVCPUPerGPU = types.Int64Value(int64(pod.MinVCPUPerGPU))
+	} else if data.MinVCPUPerGPU.IsNull() || data.MinVCPUPerGPU.IsUnknown() {
+		data.MinVCPUPerGPU = types.Int64Value(2) // default
+	}
+	if pod.MinRAMPerGPU > 0 {
+		data.MinRAMPerGPU = types.Int64Value(int64(pod.MinRAMPerGPU))
+	} else if data.MinRAMPerGPU.IsNull() || data.MinRAMPerGPU.IsUnknown() {
+		data.MinRAMPerGPU = types.Int64Value(8) // default
+	}
+
+	// Update priority fields - use API value if available, otherwise preserve state or use default
+	if pod.GPUTypePriority != "" {
+		data.GPUTypePriority = types.StringValue(pod.GPUTypePriority)
+	} else if data.GPUTypePriority.IsNull() || data.GPUTypePriority.IsUnknown() {
+		data.GPUTypePriority = types.StringValue("availability") // default
+	}
+	if pod.CPUFlavorPriority != "" {
+		data.CPUFlavorPriority = types.StringValue(pod.CPUFlavorPriority)
+	} else if data.CPUFlavorPriority.IsNull() || data.CPUFlavorPriority.IsUnknown() {
+		data.CPUFlavorPriority = types.StringValue("availability") // default
+	}
+	if pod.DataCenterPriority != "" {
+		data.DataCenterPriority = types.StringValue(pod.DataCenterPriority)
+	} else if data.DataCenterPriority.IsNull() || data.DataCenterPriority.IsUnknown() {
+		data.DataCenterPriority = types.StringValue("availability") // default
+	}
+
+	// Try to extract actual data center from machine info if available
+	if pod.Machine != nil {
+		if dataCenterId, ok := pod.Machine["dataCenterId"].(string); ok && dataCenterId != "" {
+			data.ActualDataCenter = types.StringValue(dataCenterId)
+		} else {
+			data.ActualDataCenter = types.StringValue("")
+		}
+	} else {
+		data.ActualDataCenter = types.StringValue("")
 	}
 }
